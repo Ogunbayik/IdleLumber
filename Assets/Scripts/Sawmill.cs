@@ -2,49 +2,80 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Sawmill : MonoBehaviour
+public class SawMill : MonoBehaviour
 {
-    private List<GameObject> lumberList;
+    private SawMillAnimation animator;
+    [SerializeField] private List<GameObject> timberList;
 
-    [SerializeField] private Transform lumberPrefab;
-    [SerializeField] private Transform producePoint;
-    [SerializeField] private Vector3 lumberRotation;
+    [SerializeField] private Transform timberPrefab;
+    [SerializeField] private Transform buildPosition;
 
-    [SerializeField] private float produceRate;
-    [SerializeField] private int produceAmountMax;
-    private float produceTimer;
+    [SerializeField] private int woodCount;
+    [SerializeField] private int maximumTimber;
+    private int stackCount = 10;
 
-    void Start()
+    private bool canBuild;
+
+    private void Awake()
     {
-        lumberList = new List<GameObject>();
-        produceTimer = produceRate;
+        animator = GetComponent<SawMillAnimation>();
+        timberList = new List<GameObject>();
     }
 
-    void Update()
+    private void Update()
     {
-        ProduceLumber();
+        Build();
     }
 
-    private void ProduceLumber()
+    private void Build()
     {
-        produceTimer -= Time.deltaTime;
-  
-        if (produceTimer <= 0 && lumberList.Count < produceAmountMax)
+        if (woodCount > 0)
+            canBuild = true;
+        else
+            canBuild = false;
+
+        if (canBuild)
+            animator.WorkAnimation(true);
+        else
+            animator.WorkAnimation(false);
+    }
+
+    public void BuildTimber()
+    {
+        var timberCount = timberList.Count;
+        var rowCount = timberCount / stackCount;
+
+        if (timberCount < maximumTimber)
         {
-            CreateLumber();
-            produceTimer = produceRate;
+            var rotation = new Vector3(0, 90f, 0);
+            var timber = Instantiate(timberPrefab);
+            timberList.Add(timber.gameObject);
+            
+
+            var distanceBetweenTimber = 6f;
+            timber.transform.position = new Vector3(buildPosition.position.x - ((float)rowCount/1.5f), buildPosition.position.y + (timberCount%stackCount)/ distanceBetweenTimber, buildPosition.position.z);
+            timber.transform.rotation = Quaternion.Euler(rotation);
+        }
+
+        woodCount--;
+    }
+
+    public void RemoveLumber()
+    {
+        GameObject lastWood = timberList[timberList.Count - 1];
+
+        if (timberList.Count > 0)
+        {
+
+            var lastWoodIndex = timberList.Count - 1;
+            timberList.RemoveAt(lastWoodIndex);
+            Destroy(lastWood);
         }
     }
 
-    private void CreateLumber()
+    public void AddWood()
     {
-        var lumber = Instantiate(lumberPrefab);
-        lumberList.Add(lumber.gameObject);
-        var lumberIndex = lumberList.IndexOf(lumber.gameObject);
-        var distanceBetweenLumber = 3.3f;
-        var nextPosition = (float)lumberIndex / distanceBetweenLumber;
-        lumber.position = new Vector3(producePoint.position.x + nextPosition, producePoint.position.y, producePoint.position.z);
-        lumber.rotation = Quaternion.Euler(lumberRotation);
+        woodCount++;
     }
 
 

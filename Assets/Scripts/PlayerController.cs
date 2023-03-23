@@ -22,11 +22,6 @@ public class PlayerController : MonoBehaviour
     {
         animator = GetComponentInChildren<PlayerAnimation>();
     }
-    void Start()
-    {
-        
-    }
-
     void Update()
     {
         HandleMovement();
@@ -59,4 +54,10 @@ public class PlayerController : MonoBehaviour
         }
 
     }
+
+    public bool IsRun()
+    {
+        return isRun;
+    }
+
 }

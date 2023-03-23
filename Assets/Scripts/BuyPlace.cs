@@ -4,14 +4,11 @@ using UnityEngine;
 
 public class BuyPlace : MonoBehaviour
 {
-    private void OnTriggerStay(Collider other)
-    {
-        var player = other.GetComponent<PlayerController>();
+    [SerializeField] private SawMill sawMill;
 
-        if(player)
-        {
-            Debug.Log("You can buy");
-        }
+    public void AddWood()
+    {
+        sawMill.AddWood();
     }
 
 
