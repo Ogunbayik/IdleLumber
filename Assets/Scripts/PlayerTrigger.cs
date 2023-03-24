@@ -21,6 +21,7 @@ public class PlayerTrigger : MonoBehaviour
 
         if(buyPlace)
         {
+            this.buyPlace = buyPlace;
             OnSellWood?.Invoke(this, EventArgs.Empty);
         }
     }

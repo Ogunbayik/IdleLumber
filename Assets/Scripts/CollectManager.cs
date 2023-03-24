@@ -12,6 +12,7 @@ public class CollectManager : MonoBehaviour
     [SerializeField] private Transform woodPrefab;
     [SerializeField] private Transform carryPoint;
 
+    [SerializeField] private int maximumCollectAmount;
     [SerializeField] private float collectTimer;
     [SerializeField] private float startCollectTimer;
 
@@ -37,15 +38,20 @@ public class CollectManager : MonoBehaviour
 
     private void PlayerTrigger_OnCollectWood(object sender, System.EventArgs e)
     {
-        if (collectTimer <= 0)
+        if (woodList.Count < maximumCollectAmount)
         {
-            var wood = Instantiate(woodPrefab, carryPoint);
-            woodList.Add(wood.gameObject);
+            if (collectTimer <= 0)
+            {
+                var wood = Instantiate(woodPrefab, carryPoint);
+                woodList.Add(wood.gameObject);
 
-            var woodIndex = woodList.IndexOf(wood.gameObject);
-            wood.transform.position = new Vector3(wood.transform.position.x, wood.transform.position.y + (float)woodIndex/3.3f , wood.transform.position.z);
+                var woodIndex = woodList.IndexOf(wood.gameObject);
+                var positionYRate = 3.3f;
+                var distanceBetweenWood = (float)woodIndex / positionYRate;
+                wood.transform.position = new Vector3(wood.transform.position.x, wood.transform.position.y + distanceBetweenWood, wood.transform.position.z);
 
-            collectTimer = startCollectTimer;
+                collectTimer = startCollectTimer;
+            }
         }
     }
     private void PlayerTrigger_OnSellWood(object sender, System.EventArgs e)
@@ -57,6 +63,7 @@ public class CollectManager : MonoBehaviour
                 var lastWood = woodList[woodList.Count - 1];
                 woodList.Remove(lastWood);
                 Destroy(lastWood.gameObject);
+                playerTrigger.buyPlace.AddWood();
 
                 collectTimer = startCollectTimer;
             }

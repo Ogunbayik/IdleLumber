@@ -53,7 +53,7 @@ public class SawMill : MonoBehaviour
             
 
             var distanceBetweenTimber = 6f;
-            timber.transform.position = new Vector3(buildPosition.position.x - ((float)rowCount/1.5f), buildPosition.position.y + (timberCount%stackCount)/ distanceBetweenTimber, buildPosition.position.z);
+            timber.transform.position = new Vector3(buildPosition.position.x + ((float)rowCount/1.5f), buildPosition.position.y + (timberCount%stackCount)/ distanceBetweenTimber, buildPosition.position.z);
             timber.transform.rotation = Quaternion.Euler(rotation);
         }
 
