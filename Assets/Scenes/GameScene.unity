@@ -2736,6 +2736,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51525a6dab3883a49b9fe77031642798, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startTimer: 2
   buyPlace: {fileID: 0}
 --- !u!114 &3119862508381971021
 MonoBehaviour:
@@ -2753,8 +2754,7 @@ MonoBehaviour:
   woodPrefab: {fileID: 7225997227085969024, guid: ddc83aa4c93f91449b7591b88bb91a0a, type: 3}
   carryPoint: {fileID: 1176198773}
   maximumCollectAmount: 5
-  collectTimer: 0
-  startCollectTimer: 1
+  startTimer: 2
 --- !u!4 &3119862508381971022
 Transform:
   m_ObjectHideFlags: 0

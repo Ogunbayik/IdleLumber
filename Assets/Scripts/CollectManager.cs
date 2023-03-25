@@ -13,11 +13,8 @@ public class CollectManager : MonoBehaviour
     [SerializeField] private Transform carryPoint;
 
     [SerializeField] private int maximumCollectAmount;
-    [SerializeField] private float collectTimer;
-    [SerializeField] private float startCollectTimer;
 
-    
-
+    private bool hasMaximumWood;
     private void Awake()
     {
         playerTrigger = GetComponent<PlayerTrigger>();
@@ -26,53 +23,51 @@ public class CollectManager : MonoBehaviour
     void Start()
     {
         woodList = new List<GameObject>();
-        collectTimer = startCollectTimer;
         playerTrigger.OnCollectWood += PlayerTrigger_OnCollectWood;
         playerTrigger.OnSellWood += PlayerTrigger_OnSellWood;
     }
-
     private void Update()
     {
-        collectTimer -= Time.deltaTime;
+        CheckMaximumWood();
+    }
+    private void CheckMaximumWood()
+    {
+        if (woodList.Count <= 0)
+            animator.CarryAnimation(false);
+
+        if (woodList.Count < maximumCollectAmount)
+            hasMaximumWood = false;
+        else
+            hasMaximumWood = true;
     }
 
     private void PlayerTrigger_OnCollectWood(object sender, System.EventArgs e)
     {
         if (woodList.Count < maximumCollectAmount)
         {
-            if (collectTimer <= 0)
-            {
-                var wood = Instantiate(woodPrefab, carryPoint);
-                woodList.Add(wood.gameObject);
+            var wood = Instantiate(woodPrefab, carryPoint);
+            woodList.Add(wood.gameObject);
 
-                var woodIndex = woodList.IndexOf(wood.gameObject);
-                var positionYRate = 3.3f;
-                var distanceBetweenWood = (float)woodIndex / positionYRate;
-                wood.transform.position = new Vector3(wood.transform.position.x, wood.transform.position.y + distanceBetweenWood, wood.transform.position.z);
-
-                collectTimer = startCollectTimer;
-            }
+            var woodIndex = woodList.IndexOf(wood.gameObject);
+            var positionYRate = 3.3f;
+            var distanceBetweenWood = (float)woodIndex / positionYRate;
+            wood.transform.position = new Vector3(wood.transform.position.x, wood.transform.position.y + distanceBetweenWood, wood.transform.position.z);
         }
     }
     private void PlayerTrigger_OnSellWood(object sender, System.EventArgs e)
     {
         if (woodList.Count > 0)
         {
-            if (collectTimer <= 0)
-            {
-                var lastWood = woodList[woodList.Count - 1];
-                woodList.Remove(lastWood);
-                Destroy(lastWood.gameObject);
-                playerTrigger.buyPlace.AddWood();
-
-                collectTimer = startCollectTimer;
-            }
-
+            var lastWood = woodList[woodList.Count - 1];
+            woodList.Remove(lastWood);
+            Destroy(lastWood.gameObject);
+            playerTrigger.buyPlace.AddWood();
         }
-        else
-        {
-            animator.CarryAnimation(false);
-        }
-
     }
+
+    public bool HasMaximumWood()
+    {
+        return hasMaximumWood;
+    }
+
 }

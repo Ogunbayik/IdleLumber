@@ -1182,12 +1182,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 339ad5bcc50523a48a87781e44436f4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  strap: {fileID: 1116311228439200816}
+  strapR: {fileID: 1116311227044540208}
+  cargo: {fileID: 1116311227907871497}
   movePoints:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  currentState: 0
 --- !u!195 &8723154990201112133
 NavMeshAgent:
   m_ObjectHideFlags: 0

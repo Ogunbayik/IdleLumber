@@ -5,36 +5,49 @@ using UnityEngine.AI;
 
 public class Truck : MonoBehaviour
 {
+    [SerializeField] private GameObject strap;
+    [SerializeField] private GameObject strapR;
+    [SerializeField] private GameObject cargo;
+
+    private PlayerTrigger playerTrigger;
+    private NavMeshAgent agent;
     private enum States
     {
         SellWood,
         BuyLumber,
         Move,
     }
-
+    [SerializeField] private TruckMovePoints[] movePoints;
     [SerializeField] private States currentState;
 
-    private NavMeshAgent agent;
-    [SerializeField] private TruckMovePoints[] movePoints;
 
+    private float buyTimer;
+    private float startBuyTimer = 1f;
     private int woodCount;
+    private int desiredLumberCount;
     private int moveIndex = 0;
     private void Awake()
     {
+        playerTrigger = FindObjectOfType<PlayerTrigger>();
         agent = GetComponent<NavMeshAgent>();
     }
     private void Start()
     {
+        SetWoodCount();
         currentState = States.Move;
-        SetWoodCount(woodCount);
+        buyTimer = startBuyTimer;
+
+        playerTrigger.OnCollectWood += PlayerTrigger_OnCollectWood;
     }
+
+    private void PlayerTrigger_OnCollectWood(object sender, System.EventArgs e)
+    {
+        if (currentState == States.SellWood)
+            woodCount--;
+    }
+
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.T))
-        {
-            woodCount--;
-        }
-
         switch(currentState)
         {
             case States.Move: HandleMovement();
@@ -46,6 +59,14 @@ public class Truck : MonoBehaviour
         }
 
         HandleMovement();
+    }
+    private void SetWoodCount()
+    {
+        var minimumWood = 3;
+        var maximumWood = 10;
+
+        woodCount = Random.Range(minimumWood, maximumWood);
+        desiredLumberCount = woodCount;
     }
 
     private void HandleMovement()
@@ -78,7 +99,6 @@ public class Truck : MonoBehaviour
                 moveIndex = movePoints.Length;
                 return;
             }
-
             moveIndex++;
         }
         Debug.Log(moveIndex);
@@ -86,33 +106,40 @@ public class Truck : MonoBehaviour
 
     private void HandleSell()
     {
-        Debug.Log("You can sell wood!");
-
-        if(Input.GetKeyDown(KeyCode.T))
+        if (woodCount <= 0)
         {
+            ActivateCargo(false);
             moveIndex++;
             currentState = States.Move;
         }
+
     }
 
     private void HandleBuy()
     {
-        Debug.Log("You can buy lumber!");
-        if (Input.GetKeyDown(KeyCode.T))
+        if(desiredLumberCount <= 0)
         {
             moveIndex++;
             currentState = States.Move;
         }
+
+        buyTimer -= Time.deltaTime;
+
+        if(buyTimer <= 0)
+        {
+            ActivateCargo(true);
+            buyTimer = startBuyTimer;
+            desiredLumberCount--;
+        }
     }
 
-    
-
-
-
-    public void SetWoodCount(int woodCount)
+    private void ActivateCargo(bool isActive)
     {
-        this.woodCount = woodCount;
+        strap.SetActive(isActive);
+        strapR.SetActive(isActive);
+        cargo.SetActive(isActive);
     }
+
     public int GetWoodCount()
     {
         return woodCount;

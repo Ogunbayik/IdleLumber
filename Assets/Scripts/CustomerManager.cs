@@ -24,7 +24,6 @@ public class CustomerManager : MonoBehaviour
         var randomIndex = Random.Range(0, allTrucks.Length);
         var randomTruck = allTrucks[randomIndex];
         oldTruck = Instantiate(randomTruck, spawnPoint.position, Quaternion.identity);
-        oldTruck.SetWoodCount(3);
     }
 
     private void SpawnRandomTruck()
@@ -34,7 +33,6 @@ public class CustomerManager : MonoBehaviour
             var randomIndex = Random.Range(0, allTrucks.Length);
             var randomTruck = allTrucks[randomIndex];
             newTruck = Instantiate(randomTruck, spawnPoint.position, Quaternion.identity);
-            newTruck.SetWoodCount(4);
             oldTruck = newTruck;
         }
     }
